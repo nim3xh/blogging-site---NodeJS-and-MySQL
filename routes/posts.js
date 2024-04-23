@@ -3,6 +3,6 @@ const postsController = require('../controllers/post.controller'); // Import pos
 
 const router = express.Router(); // Create a router
 
-router.get('/',postsController.index); // Handle GET request at /posts
+router.post('/',postsController.save); // Handle GET request at /posts
 
 module.exports = router; // Export the router

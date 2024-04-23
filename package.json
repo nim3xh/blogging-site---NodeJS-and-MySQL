@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/nim3xh/blogging-site---NodeJS-and-MySQL#readme",
   "dependencies": {
+    "body-parser": "^1.20.2",
     "express": "^4.19.2",
     "mysql2": "^3.9.4",
     "sequelize": "^6.37.2",
