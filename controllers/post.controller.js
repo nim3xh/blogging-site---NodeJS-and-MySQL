@@ -78,9 +78,25 @@ function update(req, res) {
     });
 }
 
+function destroy(req, res) {
+    // destroy logic
+    const id=req.params.id;
+    models.Post.destroy({where:{id:id, userId: 1}}).then(result=>{
+        res.status(200).json({
+            message:"Post deleted successfully"
+        });
+    }).catch(error=>{
+        res.status(500).json({
+            message:"Something went wrong",
+            error:error
+        });
+    });
+}
+
 module.exports = {
     save: save,
     show: show,
     index: index,
-    update: update
+    update: update,
+    destroy: destroy
 }
