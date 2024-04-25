@@ -3,6 +3,7 @@ const bodyParser = require('body-parser'); // Import body-parser
 
 const postsRoute = require('./routes/posts'); // Import postsRoute
 const commentsRoute = require('./routes/comments');
+const usersRoute = require('./routes/users');
 
 const app = express(); // Create an express app
 
@@ -11,5 +12,6 @@ app.use(bodyParser.json()); // Use body-parser for JSON data
 
 app.use('/posts',postsRoute); // Use postsRoute for /posts
 app.use('/comments',commentsRoute); // Use commentsRoute for /comments
+app.use('/users',usersRoute); // Use usersRoute for /users
 
 module.exports = app; // Export the app
