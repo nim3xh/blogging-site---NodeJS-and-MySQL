@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 function signUp(req, res){
-
+    // Check if email already exists
     models.User.findOne({
         where:{
             email: req.body.email
@@ -21,6 +21,7 @@ function signUp(req, res){
                         email: req.body.email,
                         password: hash
                     }
+                    
                 
                     models.User.create(user).then(result =>{
                         res.status(201).json({
@@ -44,6 +45,44 @@ function signUp(req, res){
     });
 }
 
+function login(req, res){
+    models.User.findOne({
+        where:{
+            email: req.body.email
+        }
+    }).then(user => {
+        if(user == null){
+            return res.status(401).json({
+                message: 'Auth failed'
+            });
+        }else{
+            bcrypt.compare(req.body.password, user.password, function(err, result){
+                if(result){
+                    const token = jwt.sign({
+                        email: user.email,
+                        userId: user.id
+                    }, 'secret', function(err, token){
+                        res.status(200).json({
+                            message: 'Auth successful',
+                            token: token
+                        });
+                    });
+                }else{
+                    res.status(401).json({
+                        message: 'Auth failed'
+                    });
+                }
+            });
+        }
+    }).catch(error => {
+        res.status(500).json({
+            message: 'Something went wrong',
+            error: error
+        });
+    });
+}
+
 module.exports = {
-    signUp: signUp
+    signUp: signUp,
+    login: login
 }
