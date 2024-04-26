@@ -8,7 +8,7 @@ function save(req, res) {
         content:req.body.content,
         imageUrl:req.body.image_url,
         categoryId:req.body.category_id,
-        userId:1
+        userId:req.userData.userId
     }
 
     const schema ={
@@ -28,16 +28,24 @@ function save(req, res) {
         });
     }
 
-    models.Post.create(post).then(result=>{
-        res.status(201).json({
-            message:"Post created successfully",
-            post:result
-        });
-    }).catch(error=>{
-        res.status(500).json({
-            message:"Something went wrong",
-            error:error
-        });
+    models.Category.findByPk(req.body.category_id).then(result=>{
+        if(!result){
+            return res.status(404).json({
+                message:"Category not found"
+            });
+        }else{
+            models.Post.create(post).then(result=>{
+                res.status(201).json({
+                    message:"Post created successfully",
+                    post:result
+                });
+            }).catch(error=>{
+                res.status(500).json({
+                    message:"Something went wrong",
+                    error:error
+                });
+            });
+        }
     });
 }
 
@@ -92,25 +100,32 @@ function update(req, res) {
     const v= new validator(); // Create a validator
     const validationResponse = v.validate(updatedPost,schema); // Validate the post against the schema
 
+    models.Category.findByPk(req.body.category_id).then(result=>{
+        if(!result){
+            return res.status(404).json({
+                message:"Category not found"
+            });
+        }else{
+            models.Post.update(updatedPost,{where:{id:id, userId: 1}}).then(result=>{
+                res.status(200).json({
+                    message:"Post updated successfully",
+                    post:updatedPost
+                });
+            }).catch(error=>{
+                res.status(500).json({
+                    message:"Something went wrong",
+                    error:error
+                });
+            });
+        }
+    });
 
     if(validationResponse != true){
         return res.status(400).json({
             message: "Validation failed",	
             error: validationResponse
         });
-    }
-
-    models.Post.update(updatedPost,{where:{id:id, userId: 1}}).then(result=>{
-        res.status(200).json({
-            message:"Post updated successfully",
-            post:updatedPost
-        });
-    }).catch(error=>{
-        res.status(500).json({
-            message:"Something went wrong",
-            error:error
-        });
-    });
+    } 
 }
 
 function destroy(req, res) {
